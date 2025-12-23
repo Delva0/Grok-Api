@@ -1,4 +1,5 @@
 from grok_api.core import Log, Grok
+import sys
 
 MODELS_TO_TEST = [
     "grok-3-auto",
@@ -14,13 +15,13 @@ def test_model(model_name):
         response = grok.chat("Say hello and tell me your model name.")
 
         if "error" in response:
-            Log.Error(f"Failed: {response['error']}")
+            print(f"Failed: {response['error']}", file=sys.stderr)
             return False
 
         print(f"Response: {response['response'][:100]}...") # Print first 100 chars
         return True
     except Exception as e:
-        Log.Error(f"Exception: {e}")
+        print(f"Exception: {e}", file=sys.stderr)
         return False
 
 def main():

@@ -5,3 +5,10 @@ from .reverse.parser import Parser
 from .reverse.xctid  import Signature
 from .reverse.anon   import Anon
 from .grok           import Grok
+from .exceptions     import (
+    GrokError,
+    GrokNetworkError,
+    GrokParsingError,
+    GrokAuthError,
+    GrokSessionError
+)

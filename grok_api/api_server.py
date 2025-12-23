@@ -1,7 +1,7 @@
 from fastapi      import FastAPI, HTTPException
 from urllib.parse import urlparse, ParseResult
 from pydantic     import BaseModel
-from .core         import Grok
+from .core         import Grok, GrokError, GrokNetworkError, GrokParsingError, GrokAuthError, GrokSessionError
 from uvicorn      import run
 
 
@@ -21,19 +21,21 @@ def format_proxy(proxy: str) -> str:
     try:
         parsed: ParseResult = urlparse(proxy)
 
-        if parsed.scheme not in ("http", ""):
-            raise ValueError("Not http scheme")
+        if parsed.scheme not in ("http", "https"):
+            raise ValueError("Scheme must be http or https")
 
-        if not parsed.hostname or not parsed.port:
-            raise ValueError("No url and port")
+        if not parsed.hostname:
+            raise ValueError("Missing hostname")
 
+        # Port is optional, will use default if missing
         if parsed.username and parsed.password:
-            return f"http://{parsed.username}:{parsed.password}@{parsed.hostname}:{parsed.port}"
-
+            port_str = f":{parsed.port}" if parsed.port else ""
+            return f"{parsed.scheme}://{parsed.username}:{parsed.password}@{parsed.hostname}{port_str}"
         else:
-            return f"http://{parsed.hostname}:{parsed.port}"
+            port_str = f":{parsed.port}" if parsed.port else ""
+            return f"{parsed.scheme}://{parsed.hostname}{port_str}"
 
-    except ValueError as e:
+    except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid proxy format: {str(e)}")
 
 @app.post("/ask")
@@ -50,8 +52,16 @@ async def create_conversation(request: ConversationRequest):
             "status": "success",
             **answer
         }
+    except GrokNetworkError as e:
+        raise HTTPException(status_code=502, detail=f"Grok Network Error: {str(e)}")
+    except GrokParsingError as e:
+        raise HTTPException(status_code=502, detail=f"Grok Parsing Error: {str(e)}")
+    except GrokAuthError as e:
+        raise HTTPException(status_code=401, detail=f"Grok Auth Error: {str(e)}")
+    except GrokError as e:
+        raise HTTPException(status_code=500, detail=f"Grok API Error: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 def main():
     run(app, host="0.0.0.0", port=6969)

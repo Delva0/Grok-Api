@@ -10,6 +10,8 @@ class Log:
     Logging class to log text better in console.
     """
     
+    enabled: bool = False
+    
     colours: Optional[dict] = {
         'SUCCESS': Fore.LIGHTGREEN_EX,
         'ERROR': Fore.LIGHTRED_EX,
@@ -18,6 +20,15 @@ class Log:
     
     lock = Lock()
     
+    @classmethod
+    def set_enabled(cls, enabled: bool) -> None:
+        """
+        Enable or disable logging.
+        
+        :param enabled: True to enable, False to disable.
+        """
+        cls.enabled = enabled
+
     @staticmethod
     def _log(level, prefix, message) -> Optional[None]:
         """
@@ -27,6 +38,9 @@ class Log:
         :param prefix: Prefix to indicate if its Success, Error or Info
         :param message: Message to Log
         """
+        
+        if not Log.enabled:
+            return
         
         timestamp: Optional[int] = datetime.fromtimestamp(time()).strftime("%H:%M:%S")
         

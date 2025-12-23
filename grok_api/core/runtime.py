@@ -1,6 +1,7 @@
 from typing    import Callable, Any, Optional, Type
 from functools import wraps
 from .logger   import Log
+from .exceptions import GrokError
 
 
 class Run:
@@ -22,18 +23,17 @@ class Run:
                 return func(*args, **kwargs)
             except Exception as e:
                 Run.handle_error(e)
-                return None 
+                raise
         return wrapper
 
     @staticmethod
-    def handle_error(exception: Exception) -> Optional[None]:
+    def handle_error(exception: Exception) -> None:
         """
         Handling an error
         
         @param exception: Exception that occured
         """
         Log.Error(f"Error occurred: {exception}")
-        exit()
         
 class Utils:
     
