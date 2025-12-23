@@ -1,4 +1,4 @@
-from core import Log, Grok
+from grok_api.core import Log, Grok
 import sys
 import time
 

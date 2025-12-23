@@ -1,4 +1,4 @@
-from core import Log, Grok
+from grok_api.core import Log, Grok
 
 MODELS_TO_TEST = [
     "grok-3-auto",

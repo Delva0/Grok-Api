@@ -1,7 +1,7 @@
 from fastapi      import FastAPI, HTTPException
 from urllib.parse import urlparse, ParseResult
 from pydantic     import BaseModel
-from core         import Grok
+from .core         import Grok
 from uvicorn      import run
 
 
@@ -53,5 +53,8 @@ async def create_conversation(request: ConversationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
+def main():
+    run(app, host="0.0.0.0", port=6969)
+
 if __name__ == "__main__":
-    run("api_server:app", host="0.0.0.0", port=6969, workers=50)
+    main()

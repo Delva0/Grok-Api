@@ -1,4 +1,4 @@
-from core        import Log, Run, Utils, Parser, Signature, Anon, Headers
+from .           import Log, Run, Utils, Parser, Signature, Anon, Headers
 from curl_cffi   import requests, CurlMime
 from dataclasses import dataclass, field
 from bs4         import BeautifulSoup

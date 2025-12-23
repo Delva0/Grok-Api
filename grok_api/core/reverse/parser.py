@@ -3,7 +3,7 @@ from json      import load, dump
 from base64    import b64decode
 from typing    import Optional
 from curl_cffi import requests
-from core      import Utils
+from ..        import Utils
 from os        import path
 
 class Parser:
@@ -14,17 +14,21 @@ class Parser:
     grok_mapping: list = []
     _grok_mapping_loaded: bool = False
 
+    BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
+    TXID_PATH = path.join(BASE_DIR, 'mappings', 'txid.json')
+    GROK_PATH = path.join(BASE_DIR, 'mappings', 'grok.json')
+
     @classmethod
     def _load__xsid_mapping(cls):
-        if not cls._mapping_loaded and path.exists('core/mappings/txid.json'):
-            with open('core/mappings/txid.json', 'r') as f:
+        if not cls._mapping_loaded and path.exists(cls.TXID_PATH):
+            with open(cls.TXID_PATH, 'r') as f:
                 cls.mapping = load(f)
             cls._mapping_loaded = True
 
     @classmethod
     def _load_grok_mapping(cls):
-        if not cls._grok_mapping_loaded and path.exists('core/mappings/grok.json'):
-            with open('core/mappings/grok.json', 'r') as f:
+        if not cls._grok_mapping_loaded and path.exists(cls.GROK_PATH):
+            with open(cls.GROK_PATH, 'r') as f:
                 cls.grok_mapping = load(f)
             cls._grok_mapping_loaded = True
 
@@ -57,7 +61,7 @@ class Parser:
                 script_content: str = requests.get(script_link, impersonate="chrome136").text
                 numbers: list = [int(x) for x in findall(r'x\[(\d+)\]\s*,\s*16', script_content)]
                 Parser.mapping[script_link] = numbers
-                with open('core/mappings/txid.json', 'w') as f:
+                with open(cls.TXID_PATH, 'w') as f:
                     dump(Parser.mapping, f)
 
             return svg_data, numbers

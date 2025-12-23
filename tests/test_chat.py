@@ -1,4 +1,4 @@
-from core import Log, Grok
+from grok_api.core import Log, Grok
 
 # No proxy for this POC unless needed, in which case uncomment and set below
 # proxy = "http://user:pass@ip:port"

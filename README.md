@@ -17,15 +17,23 @@ This project provides a Python-based API wrapper for Grok AI, enabling you to in
 
 ## Installation
 
+You can install the package directly from GitHub using `uv`:
+
+```bash
+uv add git+https://github.com/realasfngl/Grok-Api.git
+```
+
+Or clone and install locally:
+
 ```bash
 git clone https://github.com/realasfngl/Grok-Api.git
 cd Grok-Api
-pip install -r requirements.txt
+uv sync
 ```
 
 ### Requirements
 
-- Python 3.10+
+- Python 3.11+
 - curl_cffi
 - fastapi
 - uvicorn
@@ -49,24 +57,24 @@ pip install -r requirements.txt
 
 **New conversation:**
 ```python
-from core import Grok
+from grok_api.core import Grok
 
-response = Grok("grok-3-fast").start_convo("Hello, how are you today?")
+response = Grok("grok-3-fast").chat("Hello, how are you today?")
 print(response)
 
 proxy = "http://username:password@ip:port"
-response = Grok("grok-3-fast", proxy).start_convo("Tell me a joke")
+response = Grok("grok-3-fast", proxy).chat("Tell me a joke")
 print(response)
 ```
 
 **Continue conversation:**
 ```python
-from core import Grok
+from grok_api.core import Grok
 
-response = Grok().start_convo("Hello, how are you today?")
+response = Grok().chat("Hello, how are you today?")
 print(response)
 
-response2 = Grok().start_convo("That's nice! Glad to hear!", extra_data=response["extra_data"])
+response2 = Grok().chat("That's nice! Glad to hear!", extra_data=response["extra_data"])
 print(response2)
 ```
 **Example Output:**
@@ -83,14 +91,14 @@ print(response2)
 
 #### Starting the Server
 
-**Simple start:**
+**Using the installed entry point:**
 ```bash
-python api_server.py
+grok-api-server
 ```
 
-**Production start with custom configuration:**
+**Or using uv run:**
 ```bash
-uvicorn api_server:app --host 0.0.0.0 --port 6969 --workers 50
+uv run grok-api-server
 ```
 
 #### Making API Requests
