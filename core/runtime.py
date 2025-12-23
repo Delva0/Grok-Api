@@ -42,5 +42,8 @@ class Utils:
         main_text: Optional[str],
         value_1: Optional[str],
         value_2: Optional[str],
-        ) -> Type[str]:
-        return main_text.split(value_1)[1].split(value_2)[0]
+        ) -> str:
+        try:
+            return main_text.split(value_1)[1].split(value_2)[0]
+        except (IndexError, AttributeError):
+            return ""
